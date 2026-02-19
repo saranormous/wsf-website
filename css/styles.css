@@ -1221,7 +1221,81 @@ tbody td {
 .prose strong { color: var(--color-text); }
 
 /* --------------------------------------------------------------------------
-   22. Responsive — Tablet (≤ 900px)
+   22. Board Login
+   -------------------------------------------------------------------------- */
+
+.board-login {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-8) 0;
+}
+
+.board-login__card {
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.board-login__icon {
+  color: var(--color-primary);
+  margin-bottom: var(--space-4);
+}
+
+.board-login__card h2 {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-2);
+}
+
+.board-login__card > p {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-6);
+}
+
+.board-login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.board-login__input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition);
+}
+
+.board-login__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.board-login__error {
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-top: var(--space-3);
+}
+
+.board-content h2 {
+  font-size: var(--text-2xl);
+  margin-bottom: var(--space-3);
+}
+
+.board-content > p {
+  color: var(--color-text-muted);
+  line-height: var(--leading-loose);
+}
+
+.board-resources {
+  display: grid;
+  gap: var(--space-6);
+}
+
+/* --------------------------------------------------------------------------
+   23. Responsive — Tablet (≤ 900px)
    -------------------------------------------------------------------------- */
 
 @media (max-width: 900px) {
@@ -1240,7 +1314,7 @@ tbody td {
 }
 
 /* --------------------------------------------------------------------------
-   23. Responsive — Mobile (≤ 600px)
+   24. Responsive — Mobile (≤ 600px)
    -------------------------------------------------------------------------- */
 
 @media (max-width: 600px) {
@@ -1309,7 +1383,7 @@ tbody td {
 }
 
 /* --------------------------------------------------------------------------
-   24. Breadcrumbs
+   25. Breadcrumbs
    -------------------------------------------------------------------------- */
 
 .breadcrumb {
@@ -1359,7 +1433,7 @@ tbody td {
 }
 
 /* --------------------------------------------------------------------------
-   25. Back-to-top button
+   26. Back-to-top button
    -------------------------------------------------------------------------- */
 
 .back-to-top {
@@ -1405,7 +1479,7 @@ tbody td {
 }
 
 /* --------------------------------------------------------------------------
-   26. Focus-visible styles (keyboard navigation)
+   27. Focus-visible styles (keyboard navigation)
    -------------------------------------------------------------------------- */
 
 /* Remove default outline for mouse users; keep for keyboard */
@@ -1426,7 +1500,7 @@ a:focus-visible,
 }
 
 /* --------------------------------------------------------------------------
-   27. Print styles
+   28. Print styles
    -------------------------------------------------------------------------- */
 
 @media print {

@@ -103,6 +103,87 @@ document.querySelectorAll('.nav-menu a, .footer-nav a').forEach(link => {
 });
 
 // --------------------------------------------------------------------------
+// Board Login — AES-256-GCM encrypted content
+// --------------------------------------------------------------------------
+
+const boardForm      = document.getElementById('board-password-form');
+const boardInput     = document.getElementById('board-password');
+const boardError     = document.getElementById('board-login-error');
+const boardLogin     = document.getElementById('board-login-form');
+const boardContent   = document.getElementById('board-content');
+const boardEncrypted = document.getElementById('board-encrypted-data');
+
+/**
+ * Decrypt the encrypted board content using a password.
+ * Format: base64( salt[16] + iv[12] + ciphertextWithTag )
+ * Key derivation: PBKDF2 with 100,000 iterations, SHA-256
+ * Encryption: AES-256-GCM (Web Crypto appends auth tag to ciphertext)
+ */
+function decryptBoardContent(password) {
+  var json       = JSON.parse(boardEncrypted.textContent);
+  var raw        = Uint8Array.from(atob(json.data), function (c) { return c.charCodeAt(0); });
+  var salt       = raw.slice(0, 16);
+  var iv         = raw.slice(16, 28);
+  var ciphertext = raw.slice(28); // includes auth tag (Web Crypto handles this)
+
+  var encoder   = new TextEncoder();
+  var passBytes = encoder.encode(password);
+
+  return crypto.subtle.importKey('raw', passBytes, 'PBKDF2', false, ['deriveKey'])
+    .then(function (baseKey) {
+      return crypto.subtle.deriveKey(
+        { name: 'PBKDF2', salt: salt, iterations: 100000, hash: 'SHA-256' },
+        baseKey,
+        { name: 'AES-GCM', length: 256 },
+        false,
+        ['decrypt']
+      );
+    })
+    .then(function (aesKey) {
+      return crypto.subtle.decrypt({ name: 'AES-GCM', iv: iv }, aesKey, ciphertext);
+    })
+    .then(function (plainBuffer) {
+      return new TextDecoder().decode(plainBuffer);
+    });
+}
+
+function showBoardContent(html) {
+  boardContent.innerHTML = html;
+  boardContent.hidden    = false;
+  boardLogin.hidden      = true;
+  boardError.hidden      = true;
+}
+
+if (boardForm && boardEncrypted) {
+  // Check if already authenticated this session — re-decrypt with stored password
+  var savedPw = sessionStorage.getItem('wsf-board-pw');
+  if (savedPw) {
+    decryptBoardContent(savedPw)
+      .then(function (html) { showBoardContent(html); })
+      .catch(function () {
+        // Stored password no longer valid — clear and show login
+        sessionStorage.removeItem('wsf-board-pw');
+      });
+  }
+
+  boardForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var pw = boardInput.value;
+
+    decryptBoardContent(pw)
+      .then(function (html) {
+        sessionStorage.setItem('wsf-board-pw', pw);
+        showBoardContent(html);
+      })
+      .catch(function () {
+        boardError.hidden = false;
+        boardInput.value  = '';
+        boardInput.focus();
+      });
+  });
+}
+
+// --------------------------------------------------------------------------
 // Back-to-top button
 // --------------------------------------------------------------------------
 
